@@ -74,6 +74,7 @@ router.get('/:id', async function(req, res) {
     }).sort({
         datetime: -1
     }).toArray();
+    res.json(findResult);
 })
 
 router.get('/from/:name', async function(req, res) {
@@ -87,6 +88,8 @@ router.get('/from/:name', async function(req, res) {
     }).sort({
         datetime: -1
     }).toArray();
+
+    res.json(findResult);
 })
 
 router.get('/new', function (res, res) {
