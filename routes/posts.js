@@ -12,8 +12,9 @@ class Post {
     datetime;
     message;
     from;
-    constructor(obj) {
-        [this._id, this.datetime, this.message, this.from] = obj;
+
+    constructor(obj = {}) {
+        Object.assign(this, obj);
     }
 
 }
@@ -24,9 +25,9 @@ router.use(express.json());
 router.get('/', async function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
     let docs = await getDocuments() || [];
-    if(Array.isArray(docs)) {
+    if (Array.isArray(docs)) {
         docs.map(d => new Post(d));
-    } 
+    }
     res.json(docs);
 });
 
