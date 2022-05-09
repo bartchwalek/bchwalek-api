@@ -99,7 +99,9 @@ let getDocuments = async () => {
     const db = client.db(dbName);
     const collection = db.collection('post');
 
-    const findResult = await collection.find({}).toArray();
+    const findResult = await collection.find({}).sort({
+        datetime: -1
+    }).toArray();
     return findResult;
 }
 
