@@ -35,7 +35,7 @@ router.get('/', async function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
     let docs = await getDocuments() || [];
     if (Array.isArray(docs)) {
-        docs.map(d => new Post(d).serialize());
+        docs = docs.map(d => new Post(d).serialize());
     }
     res.json(docs);
 });
