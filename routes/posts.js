@@ -7,13 +7,31 @@ const client = new MongoClient(url);
 
 const dbName = 'posts';
 
+class Post {
+    _id;
+    datetime;
+    message;
+    from;
+    constructor(obj) {
+        [this._id, this.datetime, this.message, this.from] = obj;
+    }
+
+}
+
 router.use(express.json());
 
 /* GET users listing. */
 router.get('/', async function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
-    let docs = await getDocuments();
+    let docs = await getDocuments() || [];
+    if(Array.isArray(docs)) {
+        docs.map(d => new Post(d));
+    } 
     res.json(docs);
+});
+
+router.post('/', (req, res) => {
+
 });
 
 let getDocuments = async () => {
