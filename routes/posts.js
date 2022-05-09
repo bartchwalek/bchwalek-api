@@ -13,6 +13,7 @@ class Post {
     datetime;
     message;
     from;
+    ip;
 
     constructor(obj = {}) {
         Object.assign(this, obj);
@@ -22,7 +23,8 @@ class Post {
         return {
             message: this.message,
             from: this.from,
-            datetime: Math.floor(new Date().getTime() / 1000)
+            datetime: Math.floor(new Date().getTime() / 1000),
+            ip: this.ip,
         }
     }
 
@@ -31,7 +33,8 @@ class Post {
             id: this._id,
             message: this.message,
             from: this.from,
-            datetime: this.datetime
+            datetime: this.datetime,
+            ip: this.ip
         }
     }
 
@@ -65,7 +68,9 @@ router.get('/new', function (res, res) {
 })
 
 router.post('/', async (req, res) => {
-    let post = new Post(req.body);
+
+    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    let post = new Post(Object.assign({}, req.body, {ip}));
     if (post.validate()) {
 
         await client.connect();
