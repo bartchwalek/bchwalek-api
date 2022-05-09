@@ -1,0 +1,26 @@
+extends layout
+block content
+  script.
+    var sendPost = function() {
+        var domFrom = document.getElementById('from').value;
+        var domMsg = document.getElementById('message').value;
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+        var theUrl = "/posts/";
+        xmlhttp.open("POST", theUrl);
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.send(JSON.stringify({
+        from: domFrom,
+        message: domMsg
+        }));
+    }
+  h1= title
+  p Enter new post
+  div
+    label(for='from') From
+        input(id='from', type='text', value='', placeholder='Name', name='from')
+  div
+    label(for='message') Message
+        textarea(id='message', name='message', placeholder='Message')
+  div
+    input(type='submit', value='submit', onclick='sendPost()')
+

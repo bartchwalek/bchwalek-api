@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const {MongoClient} = require('mongodb');
+const vars = require("../vars");
 
 const url = 'mongodb://admin:bartc28@localhost:27017';
 const client = new MongoClient(url);
@@ -17,6 +18,14 @@ class Post {
         Object.assign(this, obj);
     }
 
+    forDb() {
+        return {
+            message: this.message,
+            from: this.from,
+            datetime: Math.floor(new Date().getTime() / 1000)
+        }
+    }
+
     serialize() {
         return {
             id: this._id,
@@ -26,9 +35,20 @@ class Post {
         }
     }
 
+    validate() {
+        return [this.message, this.from].every(v => !!v);
+    }
+
 }
 
 router.use(express.json());
+
+let sendErr = (resp, msg) => {
+    resp.json({
+        message: msg,
+        success: false
+    })
+}
 
 /* GET users listing. */
 router.get('/', async function (req, res, next) {
@@ -40,8 +60,33 @@ router.get('/', async function (req, res, next) {
     res.json(docs);
 });
 
-router.post('/', (req, res) => {
+router.get('/new', function (res, res) {
+    res.render('newpost', {title: vars.get('title')});
+})
 
+router.post('/', async (req, res) => {
+    let post = new Post(req.body);
+    if (post.validate()) {
+
+        await client.connect();
+        var db = client.db(dbName);
+        db.collection("post").insertOne(post.forDb(), (err, dbres) => {
+            if (err) {
+                sendErr(res, 'Could not insert data, db error');
+                return;
+            }
+            res.json({
+                message: 'Added successfully',
+                success: true,
+                db: dbres
+            })
+            client.close();
+        })
+
+
+    } else {
+        sendErr(res, 'Could not insert data invalid')
+    }
 });
 
 let getDocuments = async () => {
