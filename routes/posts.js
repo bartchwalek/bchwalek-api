@@ -17,6 +17,15 @@ class Post {
         Object.assign(this, obj);
     }
 
+    serialize() {
+        return {
+            id: this._id,
+            message: this.message,
+            from: this.from,
+            datetime: this.datetime
+        }
+    }
+
 }
 
 router.use(express.json());
@@ -26,7 +35,7 @@ router.get('/', async function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
     let docs = await getDocuments() || [];
     if (Array.isArray(docs)) {
-        docs.map(d => new Post(d));
+        docs.map(d => new Post(d).serialize());
     }
     res.json(docs);
 });
