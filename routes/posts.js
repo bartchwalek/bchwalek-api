@@ -63,6 +63,32 @@ router.get('/', async function (req, res, next) {
     res.json(docs);
 });
 
+router.get('/:id', async function(req, res) {
+    await client.connect();
+    let id = req.params.id;
+    const db = client.db(dbName);
+    const collection = db.collection('post');
+
+    const findResult = await collection.find({
+        _id: id
+    }).sort({
+        datetime: -1
+    }).toArray();
+})
+
+router.get('/from/:name', async function(req, res) {
+    await client.connect();
+    let name = req.params.name;
+    const db = client.db(dbName);
+    const collection = db.collection('post');
+
+    const findResult = await collection.find({
+        from: name
+    }).sort({
+        datetime: -1
+    }).toArray();
+})
+
 router.get('/new', function (res, res) {
     res.render('newpost', {title: vars.get('title')});
 })
