@@ -63,33 +63,40 @@ router.get('/', async function (req, res, next) {
     res.json(docs);
 });
 
-router.get('/:id', async function(req, res) {
+router.get('/:id', async function (req, res) {
     await client.connect();
     let id = req.params.id;
     const db = client.db(dbName);
     const collection = db.collection('post');
 
-    const findResult = await collection.find({
+    let docs = await collection.find({
         _id: id
     }).sort({
         datetime: -1
     }).toArray();
-    res.json(findResult);
+
+    if (Array.isArray(docs)) {
+        docs = docs.map(d => new Post(d).serialize());
+    }
+    res.json(docs);
 })
 
-router.get('/from/:name', async function(req, res) {
+router.get('/from/:name', async function (req, res) {
     await client.connect();
     let name = req.params.name;
     const db = client.db(dbName);
     const collection = db.collection('post');
 
-    const findResult = await collection.find({
+    let docs = await collection.find({
         from: name
     }).sort({
         datetime: -1
     }).toArray();
 
-    res.json(findResult);
+    if (Array.isArray(docs)) {
+        docs = docs.map(d => new Post(d).serialize());
+    }
+    res.json(docs);
 })
 
 router.get('/new', function (res, res) {
